@@ -5,18 +5,19 @@ public class ResourceSpawner : MonoBehaviour {
     private float _spawnRadius = 10f, _verticalRadius = 3f;
 
     [SerializeField]
+    private bool _is2d;
+
+    [SerializeField]
     private GameObject _resourcePrefab;
 
-    private float _spawnInterval;
     private float _timer;
     private bool _inited;
 
-    [SerializeField]
-    private bool _is2d = false;
+    private SimulationData _simulationData;
 
-    public void SetData(float spawnInterval) {
-        _spawnInterval = spawnInterval;
-        _inited = true;
+    public void SetData(SimulationData simulationData) {
+        _simulationData = simulationData;
+        _simulationData.OnStartSimulation += () => _inited = true;
     }
 
     void Update() {
@@ -25,7 +26,7 @@ public class ResourceSpawner : MonoBehaviour {
         }
 
         _timer += Time.deltaTime;
-        if (_timer >= _spawnInterval) {
+        if (_timer >= _simulationData.SpawnResourceInterval) {
             _timer = 0f;
             SpawnResource();
         }

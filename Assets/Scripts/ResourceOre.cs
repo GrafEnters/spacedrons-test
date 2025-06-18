@@ -11,8 +11,10 @@ public class ResourceOre : MonoBehaviour {
     [SerializeField]
     private GameObject _resourceCubePrefab;
 
+    private float _hpLeft;
+
     private void Awake() {
-        transform.up = Random.insideUnitSphere.normalized; 
+        transform.up = Random.insideUnitSphere.normalized;
     }
 
     public GameObject DestroyItselfAndDropCube() {
@@ -22,6 +24,12 @@ public class ResourceOre : MonoBehaviour {
     }
 
     public void SetCollectedPercent(float percent) {
+        if (_hpLeft > percent) {
+            _hpLeft = percent;
+        } else {
+            return;
+        }
+
         transform.localScale = Vector3.one * Mathf.Lerp(1f, _minCollectedScale, percent);
     }
 }

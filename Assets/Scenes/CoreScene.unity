@@ -1601,10 +1601,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _followCam: {fileID: 1077500008}
   _staticCam: {fileID: 1839917906}
-  _defaultTarget: {fileID: 0}
   _droneLayer:
     serializedVersion: 2
     m_Bits: 64
+  _volume: {fileID: 832575518}
 --- !u!4 &734366376
 Transform:
   m_ObjectHideFlags: 0
@@ -2005,7 +2005,19 @@ MonoBehaviour:
   m_Value: 10
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1220191299}
+        m_TargetAssemblyTypeName: SimulationUI, Assembly-CSharp
+        m_MethodName: OnRedDronesAmountChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1018083283
 GameObject:
   m_ObjectHideFlags: 0
@@ -2039,7 +2051,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: -5, y: 0}
+  m_AnchoredPosition: {x: 5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1032415366
@@ -2630,8 +2642,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnRadius: 8
   _verticalRadius: 3
-  _resourcePrefab: {fileID: 2618558657915369856, guid: 8ef6aa913f25a514fa6552dffd3fea1e, type: 3}
   _is2d: 0
+  _resourcePrefab: {fileID: 2618558657915369856, guid: 8ef6aa913f25a514fa6552dffd3fea1e, type: 3}
 --- !u!1 &1220191293
 GameObject:
   m_ObjectHideFlags: 0
@@ -2770,18 +2782,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc93b47a5e607f844b4e81a141dd5423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dronesBlue: {fileID: 1637528841}
-  _dronesRed: {fileID: 949249777}
-  _dronesSpeed: {fileID: 1982590775}
-  _spawnInterval: {fileID: 1657322656}
   _simulationSpeed: {fileID: 342997707}
-  _dronePrefab: {fileID: 8719802883541874285, guid: ea331a57ac7965841ac6c5c9efcfc935, type: 3}
-  _spawner: {fileID: 1122973909}
-  _baseBlue: {fileID: 1967382624}
-  _baseRed: {fileID: 1435624788}
-  _factionConfigBlue: {fileID: 11400000, guid: 520c2e1361316574a83694c185f5512f, type: 2}
-  _factionConfigRed: {fileID: 11400000, guid: cd94e900b68465845ba334359647d0b9, type: 2}
-  _pathToggle: {fileID: 208564097}
   _simulationSpeedLabel: {fileID: 828850067}
 --- !u!1 &1220346779
 GameObject:
@@ -3793,7 +3794,19 @@ MonoBehaviour:
   m_Value: 10
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1220191299}
+        m_TargetAssemblyTypeName: SimulationUI, Assembly-CSharp
+        m_MethodName: OnBlueDronesAmountChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1646496537
 GameObject:
   m_ObjectHideFlags: 0
@@ -4012,14 +4025,76 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 432608001}
   m_FillRect: {fileID: 1251294048}
   m_HandleRect: {fileID: 432608000}
-  m_Direction: 0
+  m_Direction: 1
   m_MinValue: 0.2
   m_MaxValue: 3
   m_WholeNumbers: 0
   m_Value: 0.2
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1220191299}
+        m_TargetAssemblyTypeName: SimulationUI, Assembly-CSharp
+        m_MethodName: OnResourceSpawnIntervalChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!1 &1667599701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1667599703}
+  - component: {fileID: 1667599702}
+  m_Layer: 0
+  m_Name: EntryPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1667599702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667599701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10b176f98de5494099e5978879f3b38a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _simulationUI: {fileID: 1220191299}
+  _baseBlue: {fileID: 1967382624}
+  _baseRed: {fileID: 1435624788}
+  _factionConfigBlue: {fileID: 11400000, guid: 520c2e1361316574a83694c185f5512f, type: 2}
+  _factionConfigRed: {fileID: 11400000, guid: cd94e900b68465845ba334359647d0b9, type: 2}
+  _resourceSpawner: {fileID: 1122973909}
+--- !u!4 &1667599703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667599701}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1687221863
 GameObject:
   m_ObjectHideFlags: 0
@@ -5066,7 +5141,19 @@ MonoBehaviour:
   m_Value: 5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1220191299}
+        m_TargetAssemblyTypeName: SimulationUI, Assembly-CSharp
+        m_MethodName: OnDronesSpeedChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1997312399
 GameObject:
   m_ObjectHideFlags: 0
@@ -5530,6 +5617,7 @@ RectTransform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1667599703}
   - {fileID: 330585546}
   - {fileID: 483630533}
   - {fileID: 1447451378}

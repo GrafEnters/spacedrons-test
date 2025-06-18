@@ -4,19 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class DroneController : MonoBehaviour {
-    private DronState _currentDronState = DronState.Idle;
-
-    private float _speed;
-
-    private ResourceOre _targetResource;
-    private FactionBase _base;
-    private Vector3 _basePosition;
-
-    private float _collectTimer;
-
-    [SerializeField]
-    private Renderer _renderer;
-
     [SerializeField]
     private float _collectionDuration = 2f;
 
@@ -33,9 +20,10 @@ public class DroneController : MonoBehaviour {
     private float _evadeDistance = 1f;
 
     [SerializeField]
-    private GameObject _pickUpEffect, _unloadEffect;
+    private Renderer _renderer;
 
-    private GameObject _fxObj;
+    [SerializeField]
+    private GameObject _pickUpEffect, _unloadEffect;
 
     [SerializeField]
     private LineRenderer _lineRenderer;
@@ -43,19 +31,23 @@ public class DroneController : MonoBehaviour {
     [SerializeField]
     private DroneStatusTextView _statusTextView;
 
-    private static bool _showPaths;
+    private DronState _currentDronState = DronState.Idle;
+
+    private ResourceOre _targetResource;
+    private FactionBase _base;
+    private Vector3 _basePosition;
+
+    private float _collectTimer;
+    private GameObject _fxObj;
     private List<Vector3> _pathPoints = new();
     private GameObject _carryingCube;
+    private SimulationData _simulationData;
 
-    public void SetData(FactionConfig factionConfig, float speed, FactionBase baseObj) {
-        _speed = speed;
+    public void SetData(FactionConfig factionConfig, SimulationData data, FactionBase baseObj) {
         _base = baseObj;
+        _simulationData = data;
         _renderer.material.color = factionConfig.Color;
         _basePosition = baseObj.transform.position;
-    }
-
-    public static void SetPathVisibility(bool visible) {
-        _showPaths = visible;
     }
 
     void Update() {
@@ -102,7 +94,7 @@ public class DroneController : MonoBehaviour {
     }
 
     void UpdatePathLine() {
-        if (!_showPaths || _currentDronState == DronState.Idle) {
+        if (!_simulationData.IsShowPaths || _currentDronState == DronState.Idle) {
             _lineRenderer.enabled = false;
             return;
         }
@@ -199,7 +191,7 @@ public class DroneController : MonoBehaviour {
             }
         }
 
-        transform.position += dir * _speed * Time.deltaTime;
+        transform.position += dir * _simulationData.DroneSpeed * Time.deltaTime;
     }
 
     void FindResource() {
@@ -288,6 +280,22 @@ public class DroneController : MonoBehaviour {
 
     public void ChangeFollowState(bool isFollowing) {
         _statusTextView.gameObject.SetActive(isFollowing);
+    }
+
+    public void ReleaseToPool() {
+        gameObject.SetActive(false);
+        if (_carryingCube) {
+            Destroy(_carryingCube);
+            _carryingCube = null;
+        }
+
+        if (_targetResource) {
+            _targetResource.IsTaken = false;
+        }
+
+        transform.position = _basePosition;
+
+        _currentDronState = DronState.Idle;
     }
 }
 

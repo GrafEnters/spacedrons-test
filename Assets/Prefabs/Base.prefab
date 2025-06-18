@@ -236,6 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _counterText: {fileID: 8366431535252536113}
+  _dronePrefab: {fileID: 8719802883541874285, guid: ea331a57ac7965841ac6c5c9efcfc935, type: 3}
 --- !u!1 &9106792534797718252
 GameObject:
   m_ObjectHideFlags: 0

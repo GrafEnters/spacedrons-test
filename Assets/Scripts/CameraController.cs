@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Unity.Cinemachine;
 using UnityEngine.Rendering;
@@ -7,9 +6,6 @@ using UnityEngine.Rendering.Universal;
 public class CameraController : MonoBehaviour {
     [SerializeField]
     private CinemachineCamera _followCam, _staticCam;
-
-    [SerializeField]
-    private Transform _defaultTarget;
 
     [SerializeField]
     private LayerMask _droneLayer;
@@ -39,8 +35,6 @@ public class CameraController : MonoBehaviour {
             ChangeCam(false);
             _followingDrone.ChangeFollowState(false);
             _followingDrone = null;
-            _followCam.Follow = _defaultTarget;
-            _followCam.LookAt = _defaultTarget;
         }
     }
 
