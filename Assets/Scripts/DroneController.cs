@@ -62,8 +62,6 @@ public class DroneController : MonoBehaviour {
     }
 
     void Update() {
-        AvoidCollision();
-
         switch (_currentState) {
             case State.Idle:
                 FindResource();
@@ -74,6 +72,7 @@ public class DroneController : MonoBehaviour {
                     return;
                 }
 
+                AvoidCollision();
                 _pathPoints = BuildPath(transform.position, _targetResource.position, _collectDistance);
                 MoveTo(_pathPoints[1]);
                 if (Vector3.Distance(transform.position, _targetResource.position) <= _collectDistance) {
@@ -87,6 +86,7 @@ public class DroneController : MonoBehaviour {
 
                 break;
             case State.ToBase:
+                AvoidCollision();
                 _pathPoints = BuildPath(transform.position, _basePosition, _collectDistance);
                 MoveTo(_pathPoints[1]);
                 if (Vector3.Distance(transform.position, _basePosition) < 0.1f) {
