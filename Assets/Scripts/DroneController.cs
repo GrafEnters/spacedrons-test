@@ -14,7 +14,7 @@ public class DroneController : MonoBehaviour {
     private float _avoidanceStrength = 2f;
 
     [SerializeField]
-    private float _collectDistance = 0.1f;
+    private float _collectDistance = 0.1f, _unloadDistance = 0.5f;
 
     [SerializeField]
     private float _evadeDistance = 1f;
@@ -68,7 +68,7 @@ public class DroneController : MonoBehaviour {
                 }
 
                 AvoidCollisionWithDrones();
-                _pathPoints = RebuildPath(transform.position, _targetResource.transform.position, _collectDistance);
+                _pathPoints = RebuildPath(transform.position, _targetResource.transform.position, _collectDistance * 0.9f);
                 MoveTo(_pathPoints[1]);
                 if (Vector3.Distance(transform.position, _targetResource.transform.position) <= _collectDistance) {
                     _currentDronState = DronState.Collecting;
@@ -82,10 +82,14 @@ public class DroneController : MonoBehaviour {
 
                 break;
             case DronState.ToBase:
-                AvoidCollisionWithDrones();
-                _pathPoints = RebuildPath(transform.position, _basePosition, _collectDistance);
+                // Если дрон далеко от базы, то избегаем столкновений с другими дронами (внутри базы они сталкиваются)
+                if (Vector3.Distance(transform.position, _basePosition) > _unloadDistance * 4f) {
+                    AvoidCollisionWithDrones();
+                }
+
+                _pathPoints = RebuildPath(transform.position, _basePosition, _unloadDistance * 0.5f);
                 MoveTo(_pathPoints[1]);
-                if (Vector3.Distance(transform.position, _basePosition) < 0.1f) {
+                if (Vector3.Distance(transform.position, _basePosition) <= _unloadDistance) {
                     _currentDronState = DronState.Unloading;
                     StartCoroutine(UnloadEffect());
                 }

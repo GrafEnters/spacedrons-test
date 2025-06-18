@@ -48,12 +48,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e60a5f68ab6b6e4faeaef9af797308f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _renderer: {fileID: 6492353768118971756}
   _collectionDuration: 2
   _avoidanceRadius: 1
   _avoidanceStrength: 2
-  _collectDistance: 0.75
+  _collectDistance: 0.8
+  _unloadDistance: 0.3
   _evadeDistance: 1
+  _renderer: {fileID: 6492353768118971756}
   _pickUpEffect: {fileID: 4953932855972941711, guid: d8692b5276713a64a9cf9c3a1d83ea64, type: 3}
   _unloadEffect: {fileID: 3312062653375994341, guid: 7df12252a5959034298490b940781833, type: 3}
   _lineRenderer: {fileID: 5722104455613258707}
