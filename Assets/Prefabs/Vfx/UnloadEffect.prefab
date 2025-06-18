@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2621079408698208690}
   - component: {fileID: 5807974579757381276}
   - component: {fileID: 7054160174190085474}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: UnloadEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}

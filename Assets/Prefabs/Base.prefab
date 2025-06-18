@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3843787417069607212}
   - component: {fileID: 4693320541250282261}
   - component: {fileID: 8366431535252536113}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FactionScore Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}

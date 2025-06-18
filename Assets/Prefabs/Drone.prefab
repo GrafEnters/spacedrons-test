@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5881484060189903302}
   - component: {fileID: 8719802883541874285}
   - component: {fileID: 7970267069738047187}
-  - component: {fileID: -418138420728027377}
   m_Layer: 6
   m_Name: Drone
   m_TagString: Untagged
@@ -33,6 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1303847667446201079}
+  - {fileID: 7833779141408764129}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8719802883541874285
@@ -55,7 +55,7 @@ MonoBehaviour:
   _evadeDistance: 1
   _pickUpEffect: {fileID: 4953932855972941711, guid: d8692b5276713a64a9cf9c3a1d83ea64, type: 3}
   _unloadEffect: {fileID: 3312062653375994341, guid: 7df12252a5959034298490b940781833, type: 3}
-  _lineRenderer: {fileID: -418138420728027377}
+  _lineRenderer: {fileID: 5722104455613258707}
 --- !u!54 &7970267069738047187
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -83,14 +83,46 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!120 &-418138420728027377
+--- !u!1 &2939560916396557373
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7833779141408764129}
+  - component: {fileID: 5722104455613258707}
+  m_Layer: 2
+  m_Name: PathLine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7833779141408764129
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2939560916396557373}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5881484060189903302}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!120 &5722104455613258707
 LineRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1108592123016281926}
+  m_GameObject: {fileID: 2939560916396557373}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
