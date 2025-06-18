@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8719802883541874285}
   - component: {fileID: 7970267069738047187}
   - component: {fileID: -418138420728027377}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Drone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,6 +52,7 @@ MonoBehaviour:
   _avoidanceRadius: 1
   _avoidanceStrength: 2
   _collectDistance: 0.75
+  _evadeDistance: 1
   _pickUpEffect: {fileID: 4953932855972941711, guid: d8692b5276713a64a9cf9c3a1d83ea64, type: 3}
   _unloadEffect: {fileID: 3312062653375994341, guid: 7df12252a5959034298490b940781833, type: 3}
   _lineRenderer: {fileID: -418138420728027377}
@@ -199,7 +200,7 @@ GameObject:
   - component: {fileID: 7835957829281685139}
   - component: {fileID: 6492353768118971756}
   - component: {fileID: 3716162054430508884}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
