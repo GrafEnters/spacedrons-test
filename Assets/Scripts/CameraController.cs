@@ -23,8 +23,18 @@ public class CameraController : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, _droneLayer)) {
+                DroneController clickedDrone = hit.collider.attachedRigidbody.GetComponent<DroneController>();
+                if (clickedDrone == _followingDrone) {
+                    return;
+                }
+
+                if (_followingDrone != null) {
+                    _followingDrone.ChangeFollowState(false);
+                }
+
                 ChangeCam(true);
-                _followingDrone = hit.collider.attachedRigidbody.GetComponent<DroneController>();
+
+                _followingDrone = clickedDrone;
                 _followingDrone.ChangeFollowState(true);
                 _followCam.LookAt = hit.transform;
                 _followCam.Follow = hit.transform;
