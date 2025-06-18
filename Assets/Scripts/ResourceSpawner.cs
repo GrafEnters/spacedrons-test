@@ -31,7 +31,7 @@ public class ResourceSpawner : MonoBehaviour {
         }
     }
 
-    void SpawnResource() {
+    private Vector3 GenerateRandomPos() {
         Vector3 randomPos = transform.position + Random.insideUnitSphere * _spawnRadius;
         if (_is2d) {
             randomPos.y = 0f;
@@ -39,6 +39,24 @@ public class ResourceSpawner : MonoBehaviour {
             randomPos.y = Random.Range(0f, _verticalRadius);
         }
 
-        Instantiate(_resourcePrefab, randomPos, Quaternion.identity);
+        return randomPos;
+    }
+
+    void SpawnResource() {
+        const int maxAttempts = 3;
+        float checkRadius = _resourcePrefab.transform.localScale.x; // зависит от размера ресурса
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            Vector3 randomPos = GenerateRandomPos();
+
+            bool intersects = Physics.CheckSphere(randomPos, checkRadius);
+
+            if (!intersects) {
+                Instantiate(_resourcePrefab, randomPos, Quaternion.identity);
+                return;
+            }
+        }
+
+        // не удалось — пропускаем до следующего тика
     }
 }

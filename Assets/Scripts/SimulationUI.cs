@@ -26,12 +26,16 @@ public class SimulationUI : MonoBehaviour {
     [SerializeField]
     private FactionConfig _factionConfigBlue, _factionConfigRed;
 
+    [SerializeField]
+    private Toggle _pathToggle;
+
     public void StartSimulation() {
         _baseBlue.SetData(_factionConfigBlue);
         _baseRed.SetData(_factionConfigRed);
         SpawnDrones((int)_dronesBlue.value, _baseBlue, _factionConfigBlue);
         SpawnDrones((int)_dronesRed.value, _baseRed, _factionConfigRed);
         _spawner.SetData(_spawnInterval.value);
+        DroneController.SetPathVisibility(_pathToggle.isOn);
     }
 
     void SpawnDrones(int count, FactionBase baseT, FactionConfig factionConfig) {
@@ -41,5 +45,9 @@ public class SimulationUI : MonoBehaviour {
             DroneController drone = Instantiate(_dronePrefab, pos, Quaternion.identity);
             drone.SetData(factionConfig, _dronesSpeed.value, baseT);
         }
+    }
+
+    public void OnPathsToggleChanged(bool isOn) {
+        DroneController.SetPathVisibility(isOn);
     }
 }

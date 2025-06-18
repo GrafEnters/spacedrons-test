@@ -23,6 +23,6 @@ public class FactionBase : MonoBehaviour {
     }
 
     private void RotateTextToCamera() {
-        _counterText.transform.forward = Camera.main.transform.forward ;
+        _counterText.transform.forward = Camera.main.transform.forward;
     }
 }
