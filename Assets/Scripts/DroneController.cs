@@ -15,7 +15,7 @@ public class DroneController : MonoBehaviour {
 
     private float _speed;
 
-    private Transform _targetResource;
+    private ResourceOre _targetResource;
     private FactionBase _base;
     private Vector3 _basePosition;
 
@@ -49,6 +49,7 @@ public class DroneController : MonoBehaviour {
 
     private static bool _showPaths;
     private List<Vector3> _pathPoints = new();
+    private GameObject _carryingCube;
 
     public void SetData(FactionConfig factionConfig, float speed, FactionBase baseObj) {
         _speed = speed;
@@ -73,9 +74,9 @@ public class DroneController : MonoBehaviour {
                 }
 
                 AvoidCollision();
-                _pathPoints = BuildPath(transform.position, _targetResource.position, _collectDistance);
+                _pathPoints = BuildPath(transform.position, _targetResource.transform.position, _collectDistance);
                 MoveTo(_pathPoints[1]);
-                if (Vector3.Distance(transform.position, _targetResource.position) <= _collectDistance) {
+                if (Vector3.Distance(transform.position, _targetResource.transform.position) <= _collectDistance) {
                     _currentState = State.Collecting;
                     _collectTimer = 0f;
                 }
@@ -152,12 +153,19 @@ public class DroneController : MonoBehaviour {
 
         if (_fxObj == null) {
             _fxObj = Instantiate(_pickUpEffect, transform.position, Quaternion.identity);
-            _fxObj.transform.forward = _targetResource.position - transform.position;
+            _fxObj.transform.forward = _targetResource.transform.position - transform.position;
+        }
+
+        if (_targetResource != null) {
+            float percent = Mathf.Clamp01(_collectTimer / _collectionDuration);
+            _targetResource.SetCollectedPercent(percent);
         }
 
         if (_collectTimer >= _collectionDuration) {
             if (_targetResource != null) {
-                Destroy(_targetResource.gameObject);
+                GameObject spawnedCube = _targetResource.DestroyItselfAndDropCube();
+                CollectCube(spawnedCube);
+                
                 _targetResource = null;
                 if (_fxObj != null) {
                     Destroy(_fxObj);
@@ -167,6 +175,13 @@ public class DroneController : MonoBehaviour {
 
             _currentState = State.ToBase;
         }
+    }
+
+    private void CollectCube(GameObject cube) {
+        Transform cubeTransform = cube.transform;
+        cubeTransform.SetParent(transform);
+        cubeTransform.localPosition = Vector3.up * 0.1f;
+        _carryingCube = cube;
     }
 
     void MoveTo(Vector3 target) {
@@ -190,9 +205,9 @@ public class DroneController : MonoBehaviour {
     }
 
     void FindResource() {
-        var resources = FindObjectsByType<Resource>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        var resources = FindObjectsByType<ResourceOre>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         float minDist = float.MaxValue;
-        Resource nearest = null;
+        ResourceOre nearest = null;
 
         foreach (var res in resources) {
             if (res.IsTaken) continue;
@@ -204,7 +219,7 @@ public class DroneController : MonoBehaviour {
         }
 
         if (nearest != null) {
-            _targetResource = nearest.transform;
+            _targetResource = nearest;
             nearest.IsTaken = true;
             _currentState = State.ToResource;
         }
@@ -267,6 +282,8 @@ public class DroneController : MonoBehaviour {
             yield return null;
         }
 
+        Destroy(_carryingCube);
+        _carryingCube = null;
         _base.AddResource();
         _currentState = State.Idle;
     }

@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19386b99477cdb748b0a94fe0eaa0886, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _minCollectedScale: 0.3
+  _resourceCubePrefab: {fileID: 2862884467778451170, guid: 434b56d414f2062448f9827bab2ca6bf, type: 3}
 --- !u!136 &1469034099671735199
 CapsuleCollider:
   m_ObjectHideFlags: 0
