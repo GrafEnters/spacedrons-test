@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-public class TextCameraAutoAlighner : MonoBehaviour {
+public class TextCameraAutoAligner : MonoBehaviour {
     private Transform _mainCameraTransform;
 
     private void Awake() {

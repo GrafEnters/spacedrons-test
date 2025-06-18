@@ -2,8 +2,6 @@ using System;
 using UnityEngine;
 
 public class EntryPoint : MonoBehaviour {
-    private readonly SimulationData _simulationData = new SimulationData();
-
     [SerializeField]
     private SimulationUI _simulationUI;
 
@@ -16,7 +14,8 @@ public class EntryPoint : MonoBehaviour {
     [SerializeField]
     private ResourceSpawner _resourceSpawner;
 
-    private SimulationTimeController _simulationTimeController = new SimulationTimeController();
+    private readonly SimulationData _simulationData = new();
+    private readonly SimulationTimeController _simulationTimeController = new();
 
     private void Awake() {
         _simulationTimeController.SetData(_simulationData);

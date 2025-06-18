@@ -50,7 +50,13 @@ public class DroneController : MonoBehaviour {
         _basePosition = baseObj.transform.position;
     }
 
-    void Update() {
+    private void Update() {
+        SwitchFsmState();
+        UpdatePathLine();
+        _statusTextView.SetStatusText(_currentDronState);
+    }
+
+    private void SwitchFsmState() {
         switch (_currentDronState) {
             case DronState.Idle:
                 FindResource();
@@ -58,14 +64,15 @@ public class DroneController : MonoBehaviour {
             case DronState.ToResource:
                 if (_targetResource == null) {
                     _currentDronState = DronState.Idle;
-                    return;
+                    break;
                 }
 
-                AvoidCollision();
-                _pathPoints = BuildPath(transform.position, _targetResource.transform.position, _collectDistance);
+                AvoidCollisionWithDrones();
+                _pathPoints = RebuildPath(transform.position, _targetResource.transform.position, _collectDistance);
                 MoveTo(_pathPoints[1]);
                 if (Vector3.Distance(transform.position, _targetResource.transform.position) <= _collectDistance) {
                     _currentDronState = DronState.Collecting;
+                    SpawnCollectionFx();
                     _collectTimer = 0f;
                 }
 
@@ -75,8 +82,8 @@ public class DroneController : MonoBehaviour {
 
                 break;
             case DronState.ToBase:
-                AvoidCollision();
-                _pathPoints = BuildPath(transform.position, _basePosition, _collectDistance);
+                AvoidCollisionWithDrones();
+                _pathPoints = RebuildPath(transform.position, _basePosition, _collectDistance);
                 MoveTo(_pathPoints[1]);
                 if (Vector3.Distance(transform.position, _basePosition) < 0.1f) {
                     _currentDronState = DronState.Unloading;
@@ -88,12 +95,9 @@ public class DroneController : MonoBehaviour {
                 // В процессе выгрузки — ожидание в корутине
                 break;
         }
-
-        UpdatePathLine();
-        _statusTextView.SetStatusText(_currentDronState);
     }
 
-    void UpdatePathLine() {
+    private void UpdatePathLine() {
         if (!_simulationData.IsShowPaths || _currentDronState == DronState.Idle) {
             _lineRenderer.enabled = false;
             return;
@@ -106,65 +110,40 @@ public class DroneController : MonoBehaviour {
         }
     }
 
-    List<Vector3> BuildPath(Vector3 start, Vector3 end, float stopDistance = 0.5f, int maxSteps = 10) {
-        List<Vector3> path = new List<Vector3>();
-        Vector3 current = start;
-        path.Add(start);
-
-        for (int i = 0; i < maxSteps; i++) {
-            Vector3 toTarget = end - current;
-            float distance = toTarget.magnitude;
-
-            if (distance <= stopDistance) {
-                break;
-            }
-
-            Vector3 direction = toTarget.normalized;
-            float rayLength = distance - stopDistance;
-
-            if (!Physics.Raycast(current, direction, out RaycastHit hit, rayLength)) {
-                Vector3 stopPoint = end - direction * stopDistance;
-                path.Add(stopPoint);
-                break;
-            }
-
-            Vector3 right = Vector3.Cross(Vector3.up, direction);
-            current = hit.point + right.normalized * _evadeDistance;
-            path.Add(current);
-        }
-
-        path.Add(end);
-        return path;
+    private List<Vector3> RebuildPath(Vector3 start, Vector3 end, float stopDistance = 0.5f, int maxSteps = 10) {
+        return Pathfinder.BuildPath(start, end, _evadeDistance, stopDistance, maxSteps);
     }
 
     private void Collecting() {
         _collectTimer += Time.deltaTime;
-
-        if (_fxObj == null) {
-            _fxObj = Instantiate(_pickUpEffect, transform.position, Quaternion.identity);
-            _fxObj.GetComponent<ParticleSystemRenderer>().trailMaterial = _renderer.material;
-            _fxObj.transform.forward = _targetResource.transform.position - transform.position;
-        }
 
         if (_targetResource != null) {
             float percent = Mathf.Clamp01(_collectTimer / _collectionDuration);
             _targetResource.SetCollectedPercent(percent);
         }
 
-        if (_collectTimer >= _collectionDuration) {
-            if (_targetResource != null) {
-                GameObject spawnedCube = _targetResource.DestroyItselfAndDropCube();
-                CollectCube(spawnedCube);
-
-                _targetResource = null;
-                if (_fxObj != null) {
-                    Destroy(_fxObj);
-                    _fxObj = null;
-                }
-            }
-
-            _currentDronState = DronState.ToBase;
+        if (!(_collectTimer >= _collectionDuration)) {
+            return;
         }
+
+        if (_targetResource != null) {
+            GameObject spawnedCube = _targetResource.DestroyItselfAndDropCube();
+            CollectCube(spawnedCube);
+
+            _targetResource = null;
+            if (_fxObj != null) {
+                Destroy(_fxObj);
+                _fxObj = null;
+            }
+        }
+
+        _currentDronState = DronState.ToBase;
+    }
+
+    private void SpawnCollectionFx() {
+        _fxObj = Instantiate(_pickUpEffect, transform.position, Quaternion.identity);
+        _fxObj.GetComponent<ParticleSystemRenderer>().trailMaterial = _renderer.material;
+        _fxObj.transform.forward = _targetResource.transform.position - transform.position;
     }
 
     private void CollectCube(GameObject cube) {
@@ -174,14 +153,13 @@ public class DroneController : MonoBehaviour {
         _carryingCube = cube;
     }
 
-    void MoveTo(Vector3 target) {
+    private void MoveTo(Vector3 target) {
         Vector3 dir = (target - transform.position).normalized;
 
         float rayDistance = 1f;
-        RaycastHit hit;
 
         // Проверяем впереди препятствие
-        if (Physics.Raycast(transform.position, dir, out hit, rayDistance)) {
+        if (Physics.Raycast(transform.position, dir, out RaycastHit hit, rayDistance)) {
             if (hit.collider.gameObject != _targetResource?.gameObject) {
                 if (hit.collider.gameObject.CompareTag("Resource") || hit.collider.gameObject.CompareTag("Obstacle")) {
                     // Сдвигаем направление вправо, чтобы обойти препятствие
@@ -194,7 +172,7 @@ public class DroneController : MonoBehaviour {
         transform.position += dir * _simulationData.DroneSpeed * Time.deltaTime;
     }
 
-    void FindResource() {
+    private void FindResource() {
         var resources = FindObjectsByType<ResourceOre>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         float minDist = float.MaxValue;
         ResourceOre nearest = null;
@@ -215,12 +193,12 @@ public class DroneController : MonoBehaviour {
         }
     }
 
-    void AvoidCollision() {
+    private void AvoidCollisionWithDrones() {
         Collider[] hits = Physics.OverlapSphere(transform.position, _avoidanceRadius);
         Vector3 avoidDir = Vector3.zero;
         int count = 0;
 
-        foreach (var hit in hits) {
+        foreach (Collider hit in hits) {
             if (hit.gameObject == gameObject || hit.gameObject == _targetResource?.gameObject) {
                 continue;
             }
@@ -239,12 +217,11 @@ public class DroneController : MonoBehaviour {
         }
 
         if (count > 0) {
-            avoidDir /= count;
             transform.position += avoidDir.normalized * _avoidanceStrength * Time.deltaTime;
         }
     }
 
-    IEnumerator UnloadEffect() {
+    private IEnumerator UnloadEffect() {
         if (_unloadEffect != null) {
             var obj = Instantiate(_unloadEffect, transform.position, Quaternion.identity);
             var particle = obj.GetComponent<ParticleSystem>().main;
@@ -252,11 +229,17 @@ public class DroneController : MonoBehaviour {
             obj.transform.forward = Vector3.up;
         }
 
-        // Здесь можно добавить эффект частиц, вспышку, масштабирование и т.д.
-        // Например, масштабируем дрона на 1.2 и обратно в 0.5 сек
+        yield return StartCoroutine(ShowUnloadAnimation());
+
+        Destroy(_carryingCube);
+        _carryingCube = null;
+        _base.AddResource();
+        _currentDronState = DronState.Idle;
+    }
+
+    private IEnumerator ShowUnloadAnimation() {
         Vector3 originalScale = transform.localScale;
         Vector3 targetScale = originalScale * 1.2f;
-
         float elapsed = 0f;
         float duration = 0.5f;
         while (elapsed < duration) {
@@ -271,11 +254,6 @@ public class DroneController : MonoBehaviour {
             elapsed += Time.deltaTime;
             yield return null;
         }
-
-        Destroy(_carryingCube);
-        _carryingCube = null;
-        _base.AddResource();
-        _currentDronState = DronState.Idle;
     }
 
     public void ChangeFollowState(bool isFollowing) {

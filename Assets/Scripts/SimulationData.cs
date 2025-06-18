@@ -5,7 +5,7 @@ public class SimulationData {
     private int _blueDronesCount = 10;
     private int _redDronesCount = 10;
     private float _droneSpeed = 5;
-    private bool _isShowPaths = false;
+    private bool _isShowPaths;
     private int _simulationSpeedIndex = 3;
     private float _spawnResourceInterval = 0.5f;
 

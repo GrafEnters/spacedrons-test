@@ -6,7 +6,7 @@ public class DroneStatusTextView : MonoBehaviour {
     [SerializeField]
     private TextMeshPro _statusText;
 
-    private Dictionary<DronState, string> _statusMessages = new Dictionary<DronState, string> {
+    private readonly Dictionary<DronState, string> _statusMessages = new Dictionary<DronState, string> {
         { DronState.Idle, "Ищет\nастероид" },
         { DronState.ToResource, "Летит к\nастероиду" },
         { DronState.Collecting, "Добывает\nастероид" },

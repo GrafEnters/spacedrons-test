@@ -11,7 +11,7 @@ public class ResourceOre : MonoBehaviour {
     [SerializeField]
     private GameObject _resourceCubePrefab;
 
-    private float _hpLeft;
+    private float _hpLeft = 1;
 
     private void Awake() {
         transform.up = Random.insideUnitSphere.normalized;
@@ -24,8 +24,8 @@ public class ResourceOre : MonoBehaviour {
     }
 
     public void SetCollectedPercent(float percent) {
-        if (_hpLeft > percent) {
-            _hpLeft = percent;
+        if (_hpLeft > 1 - percent) {
+            _hpLeft = 1 - percent;
         } else {
             return;
         }
