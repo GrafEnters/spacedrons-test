@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class SimulationUI : MonoBehaviour {
     [SerializeField]
@@ -15,6 +19,9 @@ public class SimulationUI : MonoBehaviour {
     private Slider _spawnInterval;
 
     [SerializeField]
+    private Slider _simulationSpeed;
+
+    [SerializeField]
     private DroneController _dronePrefab;
 
     [SerializeField]
@@ -28,6 +35,16 @@ public class SimulationUI : MonoBehaviour {
 
     [SerializeField]
     private Toggle _pathToggle;
+
+    [SerializeField]
+    private TextMeshProUGUI _simulationSpeedLabel;
+    
+    private List<float> _simulationSpeeds = new List<float> { 0.25f, 0.5f, 1f, 2f, 4f, 8f };
+
+    private void Start() {
+        _simulationSpeed.maxValue = _simulationSpeeds.Count - 1;
+        _simulationSpeed.SetValueWithoutNotify(_simulationSpeeds.IndexOf(1));
+    }
 
     public void StartSimulation() {
         _baseBlue.SetData(_factionConfigBlue);
@@ -49,5 +66,10 @@ public class SimulationUI : MonoBehaviour {
 
     public void OnPathsToggleChanged(bool isOn) {
         DroneController.SetPathVisibility(isOn);
+    }
+    
+    public void OnSimulationSpeedChanged(float value) {
+        Time.timeScale = _simulationSpeeds[(int)value];
+        _simulationSpeedLabel.text = $"Simulation speed: {Time.timeScale}x";
     }
 }
