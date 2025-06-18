@@ -17,12 +17,4 @@ public class FactionBase : MonoBehaviour {
         _resourceCount++;
         _counterText.text = _resourceCount.ToString();
     }
-
-    public void Update() {
-        RotateTextToCamera();
-    }
-
-    private void RotateTextToCamera() {
-        _counterText.transform.forward = Camera.main.transform.forward;
-    }
 }

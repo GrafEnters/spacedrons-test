@@ -1,17 +1,10 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 public class DroneController : MonoBehaviour {
-    public enum State {
-        Idle,
-        ToResource,
-        Collecting,
-        ToBase,
-        Unloading
-    }
-
-    private State _currentState = State.Idle;
+    private DronState _currentDronState = DronState.Idle;
 
     private float _speed;
 
@@ -47,6 +40,9 @@ public class DroneController : MonoBehaviour {
     [SerializeField]
     private LineRenderer _lineRenderer;
 
+    [SerializeField]
+    private DroneStatusTextView _statusTextView;
+
     private static bool _showPaths;
     private List<Vector3> _pathPoints = new();
     private GameObject _carryingCube;
@@ -63,13 +59,13 @@ public class DroneController : MonoBehaviour {
     }
 
     void Update() {
-        switch (_currentState) {
-            case State.Idle:
+        switch (_currentDronState) {
+            case DronState.Idle:
                 FindResource();
                 break;
-            case State.ToResource:
+            case DronState.ToResource:
                 if (_targetResource == null) {
-                    _currentState = State.Idle;
+                    _currentDronState = DronState.Idle;
                     return;
                 }
 
@@ -77,35 +73,36 @@ public class DroneController : MonoBehaviour {
                 _pathPoints = BuildPath(transform.position, _targetResource.transform.position, _collectDistance);
                 MoveTo(_pathPoints[1]);
                 if (Vector3.Distance(transform.position, _targetResource.transform.position) <= _collectDistance) {
-                    _currentState = State.Collecting;
+                    _currentDronState = DronState.Collecting;
                     _collectTimer = 0f;
                 }
 
                 break;
-            case State.Collecting:
+            case DronState.Collecting:
                 Collecting();
 
                 break;
-            case State.ToBase:
+            case DronState.ToBase:
                 AvoidCollision();
                 _pathPoints = BuildPath(transform.position, _basePosition, _collectDistance);
                 MoveTo(_pathPoints[1]);
                 if (Vector3.Distance(transform.position, _basePosition) < 0.1f) {
-                    _currentState = State.Unloading;
+                    _currentDronState = DronState.Unloading;
                     StartCoroutine(UnloadEffect());
                 }
 
                 break;
-            case State.Unloading:
+            case DronState.Unloading:
                 // В процессе выгрузки — ожидание в корутине
                 break;
         }
 
         UpdatePathLine();
+        _statusTextView.SetStatusText(_currentDronState);
     }
 
     void UpdatePathLine() {
-        if (!_showPaths || _currentState == State.Idle) {
+        if (!_showPaths || _currentDronState == DronState.Idle) {
             _lineRenderer.enabled = false;
             return;
         }
@@ -153,6 +150,7 @@ public class DroneController : MonoBehaviour {
 
         if (_fxObj == null) {
             _fxObj = Instantiate(_pickUpEffect, transform.position, Quaternion.identity);
+            _fxObj.GetComponent<ParticleSystemRenderer>().trailMaterial = _renderer.material;
             _fxObj.transform.forward = _targetResource.transform.position - transform.position;
         }
 
@@ -165,7 +163,7 @@ public class DroneController : MonoBehaviour {
             if (_targetResource != null) {
                 GameObject spawnedCube = _targetResource.DestroyItselfAndDropCube();
                 CollectCube(spawnedCube);
-                
+
                 _targetResource = null;
                 if (_fxObj != null) {
                     Destroy(_fxObj);
@@ -173,7 +171,7 @@ public class DroneController : MonoBehaviour {
                 }
             }
 
-            _currentState = State.ToBase;
+            _currentDronState = DronState.ToBase;
         }
     }
 
@@ -221,7 +219,7 @@ public class DroneController : MonoBehaviour {
         if (nearest != null) {
             _targetResource = nearest;
             nearest.IsTaken = true;
-            _currentState = State.ToResource;
+            _currentDronState = DronState.ToResource;
         }
     }
 
@@ -285,6 +283,19 @@ public class DroneController : MonoBehaviour {
         Destroy(_carryingCube);
         _carryingCube = null;
         _base.AddResource();
-        _currentState = State.Idle;
+        _currentDronState = DronState.Idle;
     }
+
+    public void ChangeFollowState(bool isFollowing) {
+        _statusTextView.gameObject.SetActive(isFollowing);
+    }
+}
+
+[Serializable]
+public enum DronState {
+    Idle,
+    ToResource,
+    Collecting,
+    ToBase,
+    Unloading
 }
