@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ResourceOre : MonoBehaviour {
     public bool IsTaken { get; set; }
@@ -8,6 +10,10 @@ public class ResourceOre : MonoBehaviour {
 
     [SerializeField]
     private GameObject _resourceCubePrefab;
+
+    private void Awake() {
+        transform.up = Random.insideUnitSphere.normalized; 
+    }
 
     public GameObject DestroyItselfAndDropCube() {
         var resourceCube = Instantiate(_resourceCubePrefab, transform.position, Quaternion.identity);

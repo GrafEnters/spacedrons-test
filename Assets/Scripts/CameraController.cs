@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class CameraController : MonoBehaviour {
     [SerializeField]
@@ -11,6 +13,9 @@ public class CameraController : MonoBehaviour {
 
     [SerializeField]
     private LayerMask _droneLayer;
+
+    [SerializeField]
+    private Volume _volume;
 
     private DroneController _followingDrone;
 
@@ -40,6 +45,8 @@ public class CameraController : MonoBehaviour {
     }
 
     private void ChangeCam(bool isFollowing) {
+        _volume.profile.TryGet(typeof(Vignette), out VolumeComponent vignette);
+        vignette.active = isFollowing;
         _followCam.enabled = isFollowing;
         _staticCam.enabled = !isFollowing;
     }
